@@ -18,13 +18,13 @@
 
 #if defined IP_RECVDSTADDR
 # define DSTADDR_SOCKOPT IP_RECVDSTADDR
-# define DSTADDR_DATASIZE (CMSG_SPACE(sizeof(struct in_addr)))
+# define DSTADDR_DATASIZE (CMSG_SPACE(sizeof(struct in6_addr)))
 # define dstaddr(x) (CMSG_DATA(x))
 #elif defined IP_PKTINFO
 struct in_pktinfo {
   unsigned int   ipi_ifindex;  /* Interface index */
-  struct in_addr ipi_spec_dst; /* Local address */
-  struct in_addr ipi_addr;     /* Header Destination address */
+  struct in6_addr ipi_spec_dst; /* Local address */
+  struct in6_addr ipi_addr;     /* Header Destination address */
 };
 
 # define DSTADDR_SOCKOPT IP_PKTINFO
@@ -366,20 +366,20 @@ error:
 static int listenSocket = -1;
 
 int dnsserver(dns_opt_t *opt) {
-  struct sockaddr_in si_other;
+  struct sockaddr_in6 si6_other;
   int senderSocket = -1;
-  senderSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  senderSocket = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
   if (senderSocket == -1) 
     return -3;
 
   int replySocket;
   if (listenSocket == -1) {
-    struct sockaddr_in si_me;
-    if ((listenSocket=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1) {
+    struct sockaddr_in6 si6_me;
+    if ((listenSocket=socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP))==-1) {
       listenSocket = -1;
       return -1;
     }
-    replySocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    replySocket = socket(AF_INET6, SOCK_DGRAM, IPPROTO_UDP);
     if (replySocket == -1)
     {
       close(listenSocket);
@@ -387,11 +387,11 @@ int dnsserver(dns_opt_t *opt) {
     }
     int sockopt = 1;
     setsockopt(listenSocket, IPPROTO_IP, DSTADDR_SOCKOPT, &sockopt, sizeof sockopt);
-    memset((char *) &si_me, 0, sizeof(si_me));
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(opt->port);
-    si_me.sin_addr.s_addr = INADDR_ANY;
-    if (bind(listenSocket, (struct sockaddr*)&si_me, sizeof(si_me))==-1)
+    memset((char *) &si6_me, 0, sizeof(si6_me));
+    si6_me.sin6_family = AF_INET6;
+    si6_me.sin6_port = htons(opt->port);
+    si6_me.sin6_addr = in6addr_any;
+    if (bind(listenSocket, (struct sockaddr*)&si6_me, sizeof(si6_me))==-1)
       return -2;
   }
   
@@ -404,8 +404,8 @@ int dnsserver(dns_opt_t *opt) {
   };
   union control_data cmsg;
   struct msghdr msg = {
-    .msg_name = &si_other,
-    .msg_namelen = sizeof(si_other),
+    .msg_name = &si6_other,
+    .msg_namelen = sizeof(si6_other),
     .msg_iov = iov,
     .msg_iovlen = 1,
     .msg_control = &cmsg,
@@ -414,7 +414,7 @@ int dnsserver(dns_opt_t *opt) {
   for (; 1; ++(opt->nRequests))
   {
     ssize_t insize = recvmsg(listenSocket, &msg, 0);
-    unsigned char *addr = (unsigned char*)&si_other.sin_addr.s_addr;
+    unsigned char *addr = (unsigned char*)&si6_other.sin6_addr;
 //    printf("DNS: Request %llu from %i.%i.%i.%i:%i of %i bytes\n", (unsigned long long)(opt->nRequests), addr[0], addr[1], addr[2], addr[3], ntohs(si_other.sin_port), (int)insize);
     if (insize <= 0)
       continue;
@@ -437,7 +437,7 @@ int dnsserver(dns_opt_t *opt) {
       }
     }
     if (!handled)
-      sendto(listenSocket, outbuf, ret, 0, (struct sockaddr*)&si_other, sizeof(si_other));
+      sendto(listenSocket, outbuf, ret, 0, (struct sockaddr*)&si6_other, sizeof(si6_other));
   }
   return 0;
 }
