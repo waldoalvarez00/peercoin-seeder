@@ -103,7 +103,12 @@ class CNode {
       CAddress addrMe;
       CAddress addrFrom;
       uint64 nNonce = 1;
-      vRecv >> nVersion >> you.nServices >> nTime >> addrMe;
+      vRecv >> nVersion >> you.nServices >> nTime;
+      if (nVersion == 90001) // we stay compatible with old clients, so the log file won't get trahsed
+          vRecv.SetVersion(90001);
+
+      vRecv >> addrMe;
+
       if (nVersion == 10300) nVersion = 300;
       if (nVersion >= 106 && !vRecv.empty())
         vRecv >> addrFrom >> nNonce;
