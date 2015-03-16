@@ -31,7 +31,7 @@ public:
   CDnsSeedOpts() : nThreads(96), nDnsThreads(4), nPort(53), mbox(NULL), ns(NULL), host(NULL), tor(NULL), fUseTestNet(false), fWipeBan(false), fWipeIgnore(false) {}
 
   void ParseCommandLine(int argc, char **argv) {
-    static const char *help = "faircoin-seeder\n"
+    static const char *help = "ppcoin-seeder\n"
                               "Usage: %s -h <host> -n <ns> [-m <mbox>] [-t <threads>] [-p <port>]\n"
                               "\n"
                               "Options:\n"
@@ -342,13 +342,17 @@ extern "C" void* ThreadStats(void*) {
   } while(1);
 }
 
-static const string mainnet_seeds[] = {"static-seed.fair-coin.org", ""};
-static const string testnet_seeds[] = {"static-testnet-seed.fair-coin.org", ""};
+static const string mainnet_seeds[] = {
+        "62.210.141.185",
+        "seed.ppcoin.net",
+        ""};
+
+static const string testnet_seeds[] = {"seed.ppcoin.org", ""};
 static const string *seeds = mainnet_seeds;
 
 extern "C" void* ThreadSeeder(void*) {
   if (!fTestNet){
-    db.Add(CService("toBeImplemented.onion", 46392), true);
+    db.Add(CService("toBeImplemented.onion", 9901), true);
   }
   do {
     for (int i=0; seeds[i] != ""; i++) {

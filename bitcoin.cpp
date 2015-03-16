@@ -80,7 +80,7 @@ class CNode {
     CAddress me(CService("0.0.0.0"));
     BeginMessage("version");
     int nBestHeight = GetRequireHeight();
-    string ver = "/faircoin-seeder:0.1.0/";
+    string ver = "/ppcoin-seeder:0.1.0/";
     vSend << PROTOCOL_VERSION << nLocalServices << nTime << you << me << nLocalNonce << ver << nBestHeight;
     EndMessage();
   }
@@ -103,11 +103,7 @@ class CNode {
       CAddress addrMe;
       CAddress addrFrom;
       uint64 nNonce = 1;
-      vRecv >> nVersion >> you.nServices >> nTime;
-      if (nVersion == 90001) // we stay compatible with old clients, so the log file won't get trahsed
-          vRecv.SetVersion(90001);
-
-      vRecv >> addrMe;
+      vRecv >> nVersion >> you.nServices >> nTime >> addrMe;
 
       if (nVersion == 10300) nVersion = 300;
       if (nVersion >= 106 && !vRecv.empty())
@@ -297,7 +293,7 @@ bool TestNode(const CService &cip, int &ban, int &clientV, std::string &clientSV
 
 /*
 int main(void) {
-  CService ip("fair-coin.org", 46392, true);
+  CService ip("seed.ppcoin.net", 9901, true);
   vector<CAddress> vAddr;
   vAddr.clear();
   int ban = 0;
