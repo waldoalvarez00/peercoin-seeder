@@ -1,5 +1,5 @@
 ppcoin-seeder
-===============
+=============
 
 ppcoin-seeder is a crawler for the ppcoin network, which exposes a list
 of reliable nodes via a built-in DNS server.
