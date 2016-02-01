@@ -342,6 +342,7 @@ extern "C" void* ThreadStats(void*) {
   } while(1);
 }
 
+static const int num_mainnet_seeds = 7;
 static const string mainnet_seeds[] = {
   "core-amsterdam.peerennial.com",
   "core-frankfurt.peerennial.com",
@@ -360,7 +361,7 @@ static const string *seeds = mainnet_seeds;
 
 extern "C" void* ThreadSeeder(void*) {
   while(true) {
-    for (int i = 0; i < seeds->size(); i++) {
+    for (int i = 0; i < num_mainnet_seeds; i++) {
       vector<CNetAddr> ips;
       LookupHost(seeds[i].c_str(), ips);
       for (vector<CNetAddr>::iterator it = ips.begin(); it != ips.end(); it++) {
