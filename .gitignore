@@ -1,5 +1,2 @@
 *.o
-dnsseed*
-dnsstats.log
-.project
-.cproject
+peercoin-seeder

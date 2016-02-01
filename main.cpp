@@ -343,27 +343,32 @@ extern "C" void* ThreadStats(void*) {
 }
 
 static const string mainnet_seeds[] = {
-        "62.210.141.185",
-        "seed.ppcoin.net",
-        ""};
+  "core-amsterdam.peerennial.com",
+  "core-frankfurt.peerennial.com",
+  "core-london.peerennial.com",
+  "core-newyork.peerennial.com",
+  "core-sanfrancisco.peerennial.com",
+  "core-singapore.peerennial.com",
+  "core-toronto.peerennial.com"
+};
 
-static const string testnet_seeds[] = {"seed.ppcoin.org", ""};
+static const string testnet_seeds[] = {
+  "seed.ppcoin.org"
+};
+
 static const string *seeds = mainnet_seeds;
 
 extern "C" void* ThreadSeeder(void*) {
-  if (!fTestNet){
-    db.Add(CService("toBeImplemented.onion", 9901), true);
-  }
-  do {
-    for (int i=0; seeds[i] != ""; i++) {
+  while(true) {
+    for (int i = 0; i < seeds->size(); i++) {
       vector<CNetAddr> ips;
       LookupHost(seeds[i].c_str(), ips);
       for (vector<CNetAddr>::iterator it = ips.begin(); it != ips.end(); it++) {
         db.Add(CService(*it, GetDefaultPort()), true);
       }
     }
-    Sleep(1800000);
-  } while(1);
+    Sleep(600000); // 10 minutes
+  }
 }
 
 int main(int argc, char **argv) {
