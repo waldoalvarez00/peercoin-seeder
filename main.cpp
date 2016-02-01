@@ -368,7 +368,7 @@ extern "C" void* ThreadSeeder(void*) {
         db.Add(CService(*it, GetDefaultPort()), true);
       }
     }
-    Sleep(600000); // 10 minutes
+    Sleep(300000); // 5 minutes
   }
 }
 
