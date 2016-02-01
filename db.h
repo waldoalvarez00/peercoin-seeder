@@ -14,9 +14,11 @@
 
 #define REQUIRE_VERSION 60004
 
+#define BLOCK_HEIGHT_JAN_31_2016 219140
+
 static inline int GetRequireHeight(const bool testnet = fTestNet)
 {
-    return testnet ? 0 : 163997;
+    return testnet ? 0 : BLOCK_HEIGHT_JAN_31_2016;
 }
 
 std::string static inline ToString(const CService &ip) {
