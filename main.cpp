@@ -342,15 +342,9 @@ extern "C" void* ThreadStats(void*) {
   } while(1);
 }
 
-static const int num_mainnet_seeds = 7;
+static const int num_mainnet_seeds = 1;
 static const string mainnet_seeds[] = {
-  "core-amsterdam.peerennial.com",
-  "core-frankfurt.peerennial.com",
-  "core-london.peerennial.com",
-  "core-newyork.peerennial.com",
-  "core-sanfrancisco.peerennial.com",
-  "core-singapore.peerennial.com",
-  "core-toronto.peerennial.com"
+  "sanfrancisco.peercoin.me"
 };
 
 static const string testnet_seeds[] = {
@@ -368,7 +362,7 @@ extern "C" void* ThreadSeeder(void*) {
         db.Add(CService(*it, GetDefaultPort()), true);
       }
     }
-    Sleep(300000); // 5 minutes
+    Sleep(600000); // 10 minutes
   }
 }
 
